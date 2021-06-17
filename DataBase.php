@@ -54,22 +54,18 @@ class DataBase
 
     function signUp($table, $username, $email, $direccion , $password)
     {
-        $table = $this->prepareData($table);
-
-        
-        
-
+        $table = $this->prepareData($table);  
         $username = $this->prepareData($username);
         $email = $this->prepareData($email);
         $password = $this->prepareData($password);
         $direccion = $this->prepareData($direccion);
         $password = password_hash($password, PASSWORD_DEFAULT);
         
+        /*
         $text = "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES (`" . $username . "`,`" . $email . "`,`" . $direccion . "`,`" . $password . "`)";
-
         $var_str = var_export($text, true);
         $var = "<?php\n\n\$query = $var_str;\n\n?>";
-        file_put_contents('filename.php', $var);
+        file_put_contents('filename.php', $var);*/
 
         $this->sql =
             "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES ('" . $username . "','" . $email . "','" . $direccion . "','" . $password . "')";
