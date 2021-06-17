@@ -5,7 +5,7 @@ if (isset($_POST['username']) && isset($_POST['email']) && isset($_POST['direcci
     if ($db->dbConnect()) {
         if ($db->signUp("usuario", $_POST['username'], $_POST['email'], $_POST['direccion'], $_POST['password'])) {
             echo "Sign Up Success";
-        } else echo $_POST['password'];
+        } else echo "Sign up Failed";
     } else echo "Error: Database connection";
 } else echo "All fields are required";
 ?>
