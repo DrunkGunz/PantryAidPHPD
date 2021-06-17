@@ -38,12 +38,12 @@ class DataBase
     {
         $username = $this->prepareData($username);
         $password = $this->prepareData($password);
-        $this->sql = "select * from " . $table . " where username = '" . $username . "'";
+        $this->sql = "select * from " . $table . " where NOMBRE = '" . $username . "'";
         $result = mysqli_query($this->connect, $this->sql);
         $row = mysqli_fetch_assoc($result);
         if (mysqli_num_rows($result) != 0) {
-            $dbusername = $row['username'];
-            $dbpassword = $row['password'];
+            $dbusername = $row['NOMBRE'];
+            $dbpassword = $row['PASSWORD'];
             if ($dbusername == $username && password_verify($password, $dbpassword)) {
                 $login = true;
             } else $login = false;
@@ -52,15 +52,27 @@ class DataBase
         return $login;
     }
 
-    function signUp($table, $fullname, $email, $username, $password)
+    function signUp($table, $username, $email, $direccion , $password)
     {
-        $fullname = $this->prepareData($fullname);
+        $table = $this->prepareData($table);
+
+        
+        
+
         $username = $this->prepareData($username);
-        $password = $this->prepareData($password);
         $email = $this->prepareData($email);
+        $password = $this->prepareData($password);
+        $direccion = $this->prepareData($direccion);
         $password = password_hash($password, PASSWORD_DEFAULT);
+        
+        $text = "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES (`" . $username . "`,`" . $email . "`,`" . $direccion . "`,`" . $password . "`)";
+
+        $var_str = var_export($text, true);
+        $var = "<?php\n\n\$query = $var_str;\n\n?>";
+        file_put_contents('filename.php', $var);
+
         $this->sql =
-            "INSERT INTO " . $table . " (fullname, username, password, email) VALUES ('" . $fullname . "','" . $username . "','" . $password . "','" . $email . "')";
+            "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES ('" . $username . "','" . $email . "','" . $direccion . "','" . $password . "')";
         if (mysqli_query($this->connect, $this->sql)) {
             return true;
         } else return false;
