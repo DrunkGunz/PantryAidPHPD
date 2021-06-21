@@ -10,7 +10,7 @@ class DataBase
     protected $username;
     protected $password;
     protected $databasename;
-
+    protected $return_arr;
     public function __construct()
     {
         $this->connect = null;
@@ -73,7 +73,33 @@ class DataBase
             return true;
         } else return false;
     }
+    function obtenerRegion(){
+        $sql = "SELECT * FROM region";
+        mysqli_set_charset($this->connect, 'utf8');
+
+        if (!$this->connect->query($sql)) {
+            echo "error conectando a la base de datos";
+        }else {
+            $result = $this->connect->query($sql);
+            if ($result->num_rows >0) {
+                $return_arr['region'] = array();
+                while ($row = $result->fetch_array()) {
+                    array_push($return_arr['region'],array(
+                        'COD_RE'=>$row['COD_RE'],
+                        'NOMBRE'=>$row['NOMBRE']
+                    ));
+                }
+                return json_encode($return_arr);
+            }
+        }
+        
+        
+        
+        
+    }
+
 
 }
+
 
 ?>
