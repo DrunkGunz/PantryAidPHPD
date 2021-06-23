@@ -52,15 +52,15 @@ class DataBase
         return $login;
     }
 
-    function signUp($table, $username, $email, $direccion , $password)
+    function signUp($table, $username, $email, $direccion , $password, $codCO)
     {
-        $table = $this->prepareData($table);  
+        $table = $this->prepareData($table);
         $username = $this->prepareData($username);
         $email = $this->prepareData($email);
         $password = $this->prepareData($password);
         $direccion = $this->prepareData($direccion);
         $password = password_hash($password, PASSWORD_DEFAULT);
-        
+        $codCO = $this->prepareData($codCO);
         /*
         $text = "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES (`" . $username . "`,`" . $email . "`,`" . $direccion . "`,`" . $password . "`)";
         $var_str = var_export($text, true);
@@ -68,11 +68,13 @@ class DataBase
         file_put_contents('filename.php', $var);*/
 
         $this->sql =
-            "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`) VALUES ('" . $username . "','" . $email . "','" . $direccion . "','" . $password . "')";
+            "INSERT INTO ". $table ."  (`NOMBRE`, `EMAIL`, `DIRECCION`, `PASSWORD`, `COD_CO` )
+            VALUES ('" . $username . "','" . $email . "','" . $direccion . "','" . $password . "'," . $codCO . ")";
         if (mysqli_query($this->connect, $this->sql)) {
             return true;
         } else return false;
     }
+
     function obtenerRegion(){
         $sql = "SELECT * FROM region";
         mysqli_set_charset($this->connect, 'utf8');
@@ -92,11 +94,54 @@ class DataBase
                 return json_encode($return_arr);
             }
         }
-        
-        
-        
-        
     }
+
+    function obtenerProvi($region){
+        $region = $this->prepareData($region);
+        $sql =
+        "select provincia.COD_PRO, provincia.NOMBRE from provincia where COD_RE=(SELECT COD_RE FROM region WHERE NOMBRE='".$region."')";
+        mysqli_set_charset($this->connect, 'utf8');
+        if (!$this->connect->query($sql)) {
+            echo "error conectando a la base de datos";
+        }else {
+            $result = $this->connect->query($sql);
+            if ($result->num_rows >0) {
+                $return_arr['provincia'] = array();
+                while ($row = $result->fetch_array()) {
+                    array_push($return_arr['provincia'],array(
+                        'COD_PRO'=>$row['COD_PRO'],
+                        'NOMBRE'=>$row['NOMBRE']
+                    ));
+                }
+                return json_encode($return_arr);
+            }
+        }
+    }
+
+    function obtenerComuna($provincia){
+        $provincia = $this->prepareData($provincia);
+        $sql =
+        "select comuna.COD_CO, comuna.NOMBRE from comuna
+        where COD_PRO=(SELECT COD_PRO FROM provincia WHERE NOMBRE='".$provincia."')";
+        mysqli_set_charset($this->connect, 'utf8');
+        if (!$this->connect->query($sql)) {
+            echo "error conectando a la base de datos";
+        }else {
+            $result = $this->connect->query($sql);
+            if ($result->num_rows >0) {
+                $return_arr['comuna'] = array();
+                while ($row = $result->fetch_array()) {
+                    array_push($return_arr['comuna'],array(
+                        'COD_CO'=>$row['COD_CO'],
+                        'NOMBRE'=>$row['NOMBRE']
+                    ));
+                }
+                return json_encode($return_arr);
+            }
+        }
+    }
+
+
 
 
 }
