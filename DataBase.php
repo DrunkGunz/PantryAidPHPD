@@ -48,9 +48,26 @@ class DataBase
                 $login = true;
             } else $login = false;
         } else $login = false;
-
         return $login;
     }
+
+    function reDirect($username)
+    {
+        $redirect=false;
+        $username = $this->prepareData($username);
+        $this->sql = "SELECT COD_U FROM `usuario` WHERE NOMBRE='" . $username . "'";
+        $result = mysqli_query($this->connect, $this->sql);
+        $row = mysqli_fetch_array($result);
+        $this->sql = "SELECT * FROM `despensa` WHERE COD_U = '" . $row['COD_U'] . "'";
+        $result = mysqli_query($this->connect, $this->sql);
+        $row = mysqli_fetch_assoc($result);
+        if (mysqli_num_rows($result) != 0) {
+            $redirect = true;
+        } else $redirect = false;
+        return $redirect;
+    }
+
+
 
     function signUp($table, $username, $email, $direccion , $password, $codCO)
     {
@@ -100,6 +117,7 @@ class DataBase
         $region = $this->prepareData($region);
         $sql =
         "select provincia.COD_PRO, provincia.NOMBRE from provincia where COD_RE=(SELECT COD_RE FROM region WHERE NOMBRE='".$region."')";
+                                                                                //se puede acortar desde el android studio
         mysqli_set_charset($this->connect, 'utf8');
         if (!$this->connect->query($sql)) {
             echo "error conectando a la base de datos";
@@ -140,10 +158,6 @@ class DataBase
             }
         }
     }
-
-
-
-
 }
 
 
