@@ -1,7 +1,7 @@
 <?php
 require "DataBase.php";
 $db = new DataBase();
-$username = $_GET['slcU'];
+$username = $_POST['username'];
 if (isset($username)) {
     if ($db->dbConnect()) {
         if ($db->reDirect($username)) {
